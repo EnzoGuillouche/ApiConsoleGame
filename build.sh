@@ -1,6 +1,7 @@
 clear
 
 DEPENDENCIES=("express" "axios")
+SETUPFILE="setup.dat"
 
 echo "Checking for package.json..."
 
@@ -35,5 +36,13 @@ echo "Opening windows..."
 
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
+# Get the number of players from setup.dat using awk
+players=$(awk -F': ' '/players/ {print $2}' "$SETUPFILE")
+
+# Open server terminal
 osascript -e "tell application \"Terminal\" to do script \"cd '$SCRIPT_DIR/Server' && node --trace-warnings server.js; exec bash\""
-osascript -e "tell application \"Terminal\" to do script \"cd '$SCRIPT_DIR/Client' && node --trace-warnings client.js; exec bash\""
+
+# Open client terminals for each player
+for ((i=1; i<=players; i++)); do
+    osascript -e "tell application \"Terminal\" to do script \"cd '$SCRIPT_DIR/Client' && node --trace-warnings client.js; exec bash\""
+done

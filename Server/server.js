@@ -18,6 +18,7 @@ class Player {
     }
 }
 
+let players = [];
 let player1 = new Player("skibidi", 100);
 
 console.clear();
