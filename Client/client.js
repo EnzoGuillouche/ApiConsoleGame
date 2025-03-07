@@ -36,15 +36,13 @@ function menu() {
     rl.question("Press 'space' to attack or 'q' to quit: ", (input) => {
         if (input === " ") {
             sendData("attack").then(() => getData()).then(() => {
-                // After each attack, prompt for input again
                 menu();
             });
         } else if (input === "q") {
             console.log("Exiting...");
-            rl.close(); // Close the readline interface when quitting
+            rl.close();
         } else {
             console.log("Invalid input. Please press 'space' to attack or 'q' to quit.");
-            // Prompt for input again if the input is invalid
             menu();
         }
     });
