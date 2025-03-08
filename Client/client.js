@@ -3,11 +3,13 @@ import readline from "readline";
 
 const apiUrl = "http://localhost:6969";
 
+let playerId;
+
 // Function to send a GET request
-async function getData() {
+async function getData(request) {
     try {
-        const response = await axios.get(`${apiUrl}/data/player1`);
-        console.log("Player 1 state:", response.data);
+        const response = await axios.get(`${apiUrl}/data/${request}`);
+        return response.data;
     } catch (error) {
         console.error("Error fetching data:", error.message);
     }
@@ -48,4 +50,20 @@ function menu() {
     });
 }
 
-getData().then(() => menu());
+async function setup() {
+    const setupResponse = await getData("connect");
+
+    if (setupResponse) {
+        playerId = setupResponse.id;
+        console.log(`Connected as ${setupResponse.playerData.name} (ID: ${playerId})`);
+    } else {
+        console.log("Failed to connect.");
+    }
+}
+
+async function main() {
+    await setup();
+    menu();
+}
+
+main();
