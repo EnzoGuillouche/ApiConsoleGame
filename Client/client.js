@@ -20,7 +20,6 @@ async function sendData(request) {
     try {
         const payload = { message: request };
         const response = await axios.post(`${apiUrl}/echo`, payload);
-        console.log("Sent:", request);
     } catch (error) {
         console.error("Error sending data:", error.message);
     }
@@ -35,16 +34,16 @@ const rl = readline.createInterface({
 });
 
 function menu() {
-    rl.question("Press 'space' to attack or 'q' to quit: ", (input) => {
-        if (input === " ") {
-            sendData("attack").then(() => getData()).then(() => {
-                menu();
+    rl.question("Press 'a' to attack or 'q' to quit: ", (input) => {
+        if (input === "a") {
+            rl.question("Type the player id you want to attack: ", (playerToAttack) => {
+                sendData(`attack/player${playerToAttack}`).then(() => menu());
             });
         } else if (input === "q") {
             console.log("Exiting...");
             rl.close();
         } else {
-            console.log("Invalid input. Please press 'space' to attack or 'q' to quit.");
+            console.log("Invalid input. Please press 'a' to attack or 'q' to quit.");
             menu();
         }
     });
@@ -55,7 +54,7 @@ async function setup() {
 
     if (setupResponse) {
         playerId = setupResponse.id;
-        console.log(`Connected as ${setupResponse.playerData.name} (ID: ${playerId})`);
+        console.log(`Connected as ${setupResponse.playerData.name}`);
     } else {
         console.log("Failed to connect.");
     }

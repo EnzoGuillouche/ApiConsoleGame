@@ -29,14 +29,24 @@ app.use(express.json());
 
 app.post("/echo/", (req, res) => {
     const receivedData = req.body;
-    if (receivedData.message === "attack") {
-        players.forEach((player) => {
-            player.reduceHealth(5);
-            console.log(`\n${player.name} has been attacked! Current state:`, player.playerData());
-        });
-    }
 
-    res.json({ received: receivedData });
+    // Check if message starts with "attack/player"
+    const match = receivedData.message.match(/^attack\/player(\d+)$/);
+    
+    if (match) {
+        const playerIndex = parseInt(match[1], 10) - 1;
+        
+        if (playerIndex >= 0 && playerIndex < players.length) {
+            players[playerIndex].reduceHealth(5);
+            console.log(`\n${players[playerIndex].name} has been attacked! Current state:`, players[playerIndex].playerData());
+            
+            res.json({ success: true, playerData: players[playerIndex].playerData() });
+        } else {
+            res.status(400).json({ error: "Invalid player ID" });
+        }
+    } else {
+        res.status(400).json({ error: "Invalid message format" });
+    }
 });
 
 app.get("/data/connect", (req, res) => {
