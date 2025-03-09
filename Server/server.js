@@ -1,5 +1,5 @@
 import express from "express";
-import fs from "fs";
+import readline from "readline";
 
 const app = express();
 const PORT = 6969;
@@ -58,6 +58,19 @@ app.get("/data/connect", (req, res) => {
 });
 
 // Start the server
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
+});
+
+// Handle spacebar to shut down the server
+readline.emitKeypressEvents(process.stdin);
+process.stdin.setRawMode(true);
+
+process.stdin.on("keypress", (str, key) => {
+    if (key.name === "space") {
+        console.log("\nShutting down server...");
+        server.close(() => {
+            process.exit(0);
+        });
+    }
 });
